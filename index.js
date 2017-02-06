@@ -29,9 +29,12 @@ app.post('/food', upload.single('image'), function(req, res) {
   // TODO: Don't hardcode the food-items model.
   clarifaiApp.models.predict('bd367be194cf45149e75f01d59f77ba7', { base64: imageInBase64 })
     .then(function(response) {
-      res.status(200).json(response.outputs[0].data.concepts.map(function(concept) {
-        return concept.name;
-      }).slice(0, 5));
+      food = {
+        predictions: response.outputs[0].data.concepts.map(function(concept) {
+          return concept.name;
+        }).slice(0, 5)
+      }
+      res.status(200).json(food);
     }, function(err) {
       console.error(err);
       res.status(500).send();
