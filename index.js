@@ -24,9 +24,8 @@ app.get('/', function(req, res) {
   res.send('Welcome to FoodHabit!');
 });
 
-app.post('/food', upload.array('images'), function(req, res) {
-  // TODO: Enable way to upload multiple images.
-  var imageInBase64 = req.files[0].buffer.toString('base64');
+app.post('/food', upload.single('image'), function(req, res) {
+  var imageInBase64 = req.file.buffer.toString('base64');
   // TODO: Don't hardcode the food-items model.
   clarifaiApp.models.predict('bd367be194cf45149e75f01d59f77ba7', { base64: imageInBase64 })
     .then(function(response) {
