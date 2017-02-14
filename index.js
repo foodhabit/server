@@ -38,9 +38,11 @@ app.post('/food', upload.single('image'), function(req, res) {
       }
       console.log(food.predictions);
       request(
-        getFormattedDataGovUrl('search/', food.predictions[0], 10),
+        getFormattedDataGovUrl('search/', food.predictions[0], 5),
         function(dataGovErr, dataGovResponse, dataGovBody) {
-          res.status(200).json(JSON.parse(dataGovBody));
+          res.status(200).json(JSON.parse(dataGovBody).list.item.map(function(foodItem) {
+            return foodItem.name;
+          }));
         });
     }, function(err) {
       console.error(err);
