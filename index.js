@@ -31,18 +31,18 @@ app.post('/food', upload.single('image'), function(req, res) {
   // TODO: Don't hardcode the food-items model.
   clarifaiApp.models.predict('bd367be194cf45149e75f01d59f77ba7', { base64: imageInBase64 })
     .then(function(response) {
-      food = {
-        predictions: response.outputs[0].data.concepts.map(function(concept) {
+      foodQueries = response.outputs[0].data.concepts.map(function(concept) {
           return concept.name;
-        }).slice(0, 5)
-      }
-      console.log(food.predictions);
+        }).slice(0, 5);
+      console.log(foodQueries);
       request(
-        getFormattedDataGovUrl('search/', food.predictions[0], 5),
+        getFormattedDataGovUrl('search/', foodQueries[0], 5),
         function(dataGovErr, dataGovResponse, dataGovBody) {
-          res.status(200).json(JSON.parse(dataGovBody).list.item.map(function(foodItem) {
-            return foodItem.name;
-          }));
+          res.status(200).json({
+            query: foodQueries[0],
+            queries: foodQueries,
+            searchResults: JSON.parse(dataGovBody).list.item
+          });
         });
     }, function(err) {
       console.error(err);
