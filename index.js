@@ -5,7 +5,13 @@ const request = require('request');
 const DATA_GOV_URL = 'https://api.nal.usda.gov/ndb/';
 
 var Clarifai = require('clarifai');
-var secrets = require('./secrets.json');
+
+var secrets;
+try {
+  secrets = require('./secrets.json');
+} catch (e) {
+  secrets = process.env;
+}
 
 var app = express();
 var upload = multer({
