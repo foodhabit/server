@@ -65,6 +65,6 @@ function getFormattedDataGovUrl(path, searchTerm, amount) {
     '&api_key=' + secrets.DATA_GOV_API_KEY);
 }
 
-app.listen(3000, function() {
-  console.log('Listening on port 3000');
+app.listen(secrets.PORT, function() {
+  console.log('Listening on port ' + secrets.PORT);
 });
