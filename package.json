@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "preinstall": "npm i -g pm2 && pm2 install pm2-logrotate",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "David Zhu",
@@ -13,6 +14,7 @@
     "clarifai": "^2.1.2-dev",
     "express": "^4.14.1",
     "multer": "^1.3.0",
+    "pm2": "^2.4.0",
     "request": "^2.79.0"
   },
   "devDependencies": {
