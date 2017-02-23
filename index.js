@@ -32,6 +32,13 @@ app.get('/', function(req, res) {
   res.send('Welcome to FoodHabit!');
 });
 
+app.get('/food', function(req, res) {
+  var searchTerm = req.query.search;
+  getNutritionResults([searchTerm], function(foodSearchResponse) {
+    res.status(200).send(foodSearchResponse);
+  })
+});
+
 app.post('/food', upload.single('image'), function(req, res) {
   var imageInBase64 = req.file.buffer.toString('base64');
   // TODO: Don't hardcode the food-items model.
@@ -40,21 +47,28 @@ app.post('/food', upload.single('image'), function(req, res) {
       foodQueries = response.outputs[0].data.concepts.map(function(concept) {
           return concept.name;
         }).slice(0, 5);
-      console.log(foodQueries);
-      request(
-        getFormattedDataGovUrl('search/', foodQueries[0], 5),
-        function(dataGovErr, dataGovResponse, dataGovBody) {
-          res.status(200).json({
-            query: foodQueries[0],
-            queries: foodQueries,
-            searchResults: JSON.parse(dataGovBody).list.item
-          });
-        });
+      getNutritionResults(foodQueries, function(foodSearchResponse) {
+        res.status(200).json(foodSearchResponse);
+      });
     }, function(err) {
       console.error(err);
       res.status(500).send();
     });
 });
+
+function getNutritionResults(foodQueries, callback) {
+  request(
+    getFormattedDataGovUrl('search/', foodQueries[0], 5),
+    function(dataGovErr, dataGovResponse, dataGovBody) {
+
+      // Format for foodSearchResponse
+      callback({
+        query: foodQueries[0],
+        queries: foodQueries,
+        searchResults: JSON.parse(dataGovBody).list.item
+      });
+    });
+}
 
 function getFormattedDataGovUrl(path, searchTerm, amount) {
   return (DATA_GOV_URL + path +
